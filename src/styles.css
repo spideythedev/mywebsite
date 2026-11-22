@@ -179,3 +179,34 @@ button:focus-visible, a:focus-visible { outline: 2px dashed var(--red); outline-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Interactive filmmaker-style opening credits */
+.film-intro { background: #eee5d4; }
+.film-intro::after { content: ""; position: absolute; inset: 15px; border: 1px solid rgba(41,39,32,.22); pointer-events: none; }
+.film-stage { width: 100%; min-height: 65vh; display: grid; place-items: center; }
+.film-copy { max-width: 900px; padding: 35px 18px; animation: film-enter .72s cubic-bezier(.2,.8,.2,1) both; }
+.film-copy.film-leaving { animation: film-exit .42s ease both; }
+.intro-credit-kicker { display: block; color: #8a806c; font: 10px "DM Mono", monospace; letter-spacing: .2em; }
+.film-title { margin: 25px 0 20px; font-size: clamp(56px,10vw,126px); line-height: .94; letter-spacing: -.085em; }
+.film-title em { color: var(--red); font: 400 1.04em var(--hand); letter-spacing: -.075em; }
+.film-title strong { color: #6689a0; font-weight: 800; }
+.intro-credit-note { color: #827967; font: clamp(16px,2vw,22px) var(--hand); }
+.intro-credit-side { position: absolute; left: 2%; top: 22%; color: #8a806c; font: 8px/1.8 "DM Mono", monospace; letter-spacing: .1em; text-align: left; transform: rotate(-7deg); }
+.intro-credit-stamp { position: absolute; right: 5%; top: 19%; width: 88px; height: 88px; border: 1px solid var(--red); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--red); font: 8px "DM Mono", monospace; text-align: center; transform: rotate(12deg); }
+.intro-credit-stamp b { font-size: 18px; }.intro-credit-stamp i { font-size: 17px; font-style: normal; }
+.intro-credit-doodle { position: absolute; left: 13%; bottom: 13%; color: #8da76a; font: 70px var(--hand); transform: rotate(-18deg); }
+.intro-hint { position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 8px; color: #8b806d; font: 10px "DM Mono", monospace; white-space: nowrap; }
+.intro-next { color: var(--red) !important; }
+.intro-progress { position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: rgba(41,39,32,.08); z-index: 3; }
+.intro-progress span { display: block; height: 100%; background: var(--red); transition: width .45s ease; }
+@keyframes film-enter { from { opacity: 0; transform: translateY(24px) rotate(-1deg); clip-path: inset(0 0 100% 0); } to { opacity: 1; transform: none; clip-path: inset(0); } }
+@keyframes film-exit { to { opacity: 0; transform: translateY(-18px) rotate(1deg); } }
+@media (max-width: 700px) {
+  .film-stage { min-height: 66vh; }
+  .film-title { font-size: clamp(53px,14vw,88px); }
+  .intro-credit-side { top: 9%; left: 1%; font-size: 7px; }
+  .intro-credit-stamp { top: 8%; right: 1%; width: 70px; height: 70px; }
+  .intro-credit-stamp b { font-size: 15px; }
+  .intro-credit-doodle { left: 0; bottom: 12%; font-size: 52px; }
+  .intro-hint { bottom: 2%; }
+}
