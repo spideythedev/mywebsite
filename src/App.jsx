@@ -183,7 +183,7 @@ export default function App() {
               <div className="constellation-lines" />
               <div className="constellation-core"><Code2 size={36}/><span>MAKE<br/>STUFF</span></div>
               {disciplines.map((item, index) => (
-                <div className={"constellation-node " + item.orbit} key={item.name} style={{ "--node-index": index }}>
+                <div className={"constellation-node " + item.orbit} key={item.name} style={{ "--node-index": index, transform: "translate(-50%,-50%) rotate(" + (index * 22.5) + "deg) translateY(-" + (82 + (index % 4) * 20) + "px) rotate(-" + (index * 22.5) + "deg)" }}>
                   <span className="node-mark">{item.mark}</span><span className="node-name">{item.name}</span>
                 </div>
               ))}
