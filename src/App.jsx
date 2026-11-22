@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-  ArrowDown, ArrowUpRight, Asterisk, AtSign, AudioLines, Github,
-  Instagram, Linkedin, Mail, Menu, MousePointer2, Pencil, Sparkles,
-  X, Volume2, VolumeX
+  ArrowDown, ArrowUpRight, Github, Linkedin, Mail, Menu,
+  MousePointer2, Pencil, X
 } from "lucide-react";
 
 const sections = [
@@ -88,7 +87,6 @@ function App() {
   const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem("fahad-intro-seen"));
   const [active, setActive] = useState("hello");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [soundOn, setSoundOn] = useState(false);
   const [note, setNote] = useState(false);
 
   useEffect(() => {
@@ -132,9 +130,6 @@ function App() {
             ))}
           </nav>
           <div className="header-actions">
-            <button className="sound-button" onClick={() => setSoundOn((value) => !value)} aria-label={soundOn ? "Turn sound off" : "Turn sound on"} title="Sound is optional">
-              {soundOn ? <Volume2 size={17}/> : <VolumeX size={17}/>}
-            </button>
             <button className="menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label="Toggle navigation">{menuOpen ? <X/> : <Menu/>}</button>
           </div>
         </header>
