@@ -210,3 +210,27 @@ button:focus-visible, a:focus-visible { outline: 2px dashed var(--red); outline-
   .intro-credit-doodle { left: 0; bottom: 12%; font-size: 52px; }
   .intro-hint { bottom: 2%; }
 }
+
+
+/* Little movements: paper, ink and things that feel touched by hand. */
+.hero-art { animation: paper-arrive 1s .15s cubic-bezier(.2,.75,.25,1) both; }
+.art-paper { animation: paper-tilt 7s ease-in-out infinite; transform-origin: 50% 45%; }
+.art-star { animation: doodle-drift 5s ease-in-out infinite; }
+.art-flower { animation: doodle-drift 6s .7s ease-in-out infinite reverse; }
+.hero-spark { animation: ink-pop .7s .8s both, doodle-drift 4.5s 1.5s ease-in-out infinite; }
+.cloud-word { transition: transform .35s cubic-bezier(.2,.8,.2,1), color .25s; }
+.cloud-word:hover { transform: rotate(0deg) scale(1.07); }
+.tool-row:hover .tool-name { transform: translateX(7px) rotate(-1deg); }
+.tool-name { transition: transform .25s ease; }
+.social-links a:hover { transform: translateY(-3px) rotate(-1deg); }
+.social-links a { transition: transform .25s ease, color .2s ease; }
+.contact-paper { animation: paper-float 9s ease-in-out infinite; }
+@keyframes paper-arrive { from { opacity: 0; transform: translateY(30px) rotate(3deg) scale(.97); } to { opacity: 1; transform: translateY(0) rotate(0) scale(1); } }
+@keyframes paper-tilt { 0%,100% { transform: rotate(0deg) translateY(0); } 50% { transform: rotate(.8deg) translateY(-5px); } }
+@keyframes doodle-drift { 0%,100% { translate: 0 0; rotate: -4deg; } 50% { translate: 4px -9px; rotate: 5deg; } }
+@keyframes ink-pop { from { opacity: 0; scale: .3; rotate: -35deg; } to { opacity: 1; scale: 1; rotate: 0; } }
+@keyframes paper-float { 0%,100% { translate: 0 0; rotate: -.6deg; } 50% { translate: 0 -4px; rotate: -.2deg; } }
+.cloud-word.cloud-seven { border-bottom: 0; text-decoration: underline wavy var(--red); text-underline-offset: 7px; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-art, .art-paper, .art-star, .art-flower, .hero-spark, .contact-paper { animation: none !important; }
+}
