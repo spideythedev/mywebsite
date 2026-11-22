@@ -26,7 +26,7 @@ const tools = [
 ];
 
 function Doodle({ className = "", children = "✳" }) {
-  return <span aria-hidden="true" className={\`doodle \${className}\`}>{children}</span>;
+  return <span aria-hidden="true" className={`doodle ${className}`}>{children}</span>;
 }
 
 function Intro({ onFinish }) {
@@ -135,12 +135,12 @@ function App() {
     <>
       {showIntro && <Intro onFinish={finishIntro} />}
       <div className="paper-world">
-        <div className="top-strip"><span>AN INTERNET PERSON, MAKING INTERNET THINGS</span><span className="top-strip-right">SOMEWHERE IN INDIA <span className="tiny-sun">✳</span> AVAILABLE FOR GOOD IDEAS</span></div>
+        <div className="top-strip"><span>a small corner of my internet</span><span className="top-strip-right">INDIA <span className="tiny-sun">✳</span> STILL FIGURING THINGS OUT</span></div>
         <header className="site-header">
           <a className="wordmark" href="#hello" onClick={(event) => { event.preventDefault(); jumpTo("hello"); }} aria-label="Fahad Malik home">f<span>.</span>m<span className="wordmark-star">✳</span></a>
           <nav className={menuOpen ? "main-nav nav-open" : "main-nav"} aria-label="Main navigation">
             {sections.map(([id, label], index) => (
-              <a key={id} href={\`#\${id}\`} className={active === id ? "active" : ""} onClick={(event) => { event.preventDefault(); jumpTo(id); }}>
+              <a key={id} href={`#${id}`} className={active === id ? "active" : ""} onClick={(event) => { event.preventDefault(); jumpTo(id); }}>
                 <span className="nav-index">0{index + 1}</span>{label}
               </a>
             ))}
@@ -154,9 +154,9 @@ function App() {
           <section id="hello" className="hero section-wrap">
             <div className="hero-copy">
               <p className="hand-note note-top">hey, you made it! <span>↙</span></p>
-              <p className="eyebrow"><span className="live-dot"/> A DEVELOPER, A MAKER, A CURIOUS HUMAN</p>
+              <p className="eyebrow"><span className="live-dot"/> I WRITE CODE, MAKE THINGS & GET CURIOUS</p>
               <h1>hello, i'm<br/><span className="name-highlight">fahad malik</span><Doodle className="hero-spark">✳</Doodle></h1>
-              <p className="hero-description">i make things for the internet. sometimes useful, sometimes weird, usually a little bit of both.</p>
+              <p className="hero-description">i like making things with code. some turn out useful, some turn out strange. either way, i learn something.</p>
               <div className="hero-links">
                 <button className="pill-button dark" onClick={() => jumpTo("story")}>get to know me <ArrowDown size={15}/></button>
                 <a className="text-link" href="mailto:hellospideydev@gmail.com">or just say hello <ArrowUpRight size={15}/></a>
@@ -193,9 +193,9 @@ function App() {
           </section>
 
           <section id="toolbox" className="toolbox-section section-wrap">
-            <div className="toolbox-top"><SectionHeading number="02" eyebrow="THE THINGS I REACH FOR">my little<br/><em>toolbox.</em></SectionHeading><p className="side-explainer">Not a badge collection. Just the tools that help me turn a thought into something real.</p></div>
+            <div className="toolbox-top"><SectionHeading number="02" eyebrow="THE THINGS I REACH FOR">my little<br/><em>toolbox.</em></SectionHeading><p className="side-explainer">These are the tools I reach for most. Some days I use them to make something useful. Other days I just break things and learn.</p></div>
             <div className="tool-list">
-              {tools.map((tool, index) => <div className="tool-row" key={tool.name}><span className="tool-number">0{index + 1}</span><span className={\`tool-name \${tool.color}\`}>{tool.name}</span><span className="tool-note">{tool.note}</span><ArrowUpRight className="tool-arrow" size={18}/></div>)}
+              {tools.map((tool, index) => <div className="tool-row" key={tool.name}><span className="tool-number">0{index + 1}</span><span className={`tool-name ${tool.color}`}>{tool.name}</span><span className="tool-note">{tool.note}</span><ArrowUpRight className="tool-arrow" size={18}/></div>)}
             </div>
             <p className="tool-footnote"><Doodle>✳</Doodle> The toolbox changes. That's kind of the point.</p>
           </section>
