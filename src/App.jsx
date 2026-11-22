@@ -11,7 +11,7 @@ const projects = [
   ["Yoppic", "INDEPENDENT STUDIO", "The studio I'm building with a team across software and design.", "https://yoppic.vercel.app", "Y"]
 ];
 const stack = [
-  ["LANGUAGES", "JavaScript", "Python", "C#", "HTML", "CSS"],
+  ["LANGUAGES", "JavaScript", "TypeScript", "Python", "C#", "HTML", "CSS"],
   ["FRONTEND", "React", "Next.js", "Vite", "Tailwind CSS"],
   ["BACKEND & DATA", "Node.js", "Firebase", "REST APIs"],
   ["OTHER WORLDS", "Godot", "Discord.py", "Git", "Vercel"]
@@ -78,7 +78,7 @@ export default function App() {
           <div className="about-copy">
             <p className="about-lead">i started coding when i was around eight. i didn't have a laptop for a long time, but that didn't really stop me from being curious.</p>
             <p>I learned by exploring, trying things, breaking them, fixing them, and then getting distracted by another idea. Eventually, that curiosity turned into real projects, open-source experiments, and a studio of my own.</p>
-            <p>I'm a full-stack developer. I enjoy the whole process — figuring out an idea, designing how it should feel, writing the code, and making the details work. I also build Yoppic, work with Fubrio, and run IDMAO.</p>
+            <p>I'm a full-stack developer. I enjoy the whole process — figuring out an idea, designing how it should feel, writing the code, and making the details work. I'm the founder of Yoppic and IDMAO, and COO at Fubrio.</p>
             <p>I don't want to spend my time only talking about what I could build. I'd rather build it and see where it goes.</p>
             <div className="about-foot"><span>SELF-TAUGHT BY DOING</span><span>BASED IN INDIA</span></div>
           </div>
