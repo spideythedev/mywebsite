@@ -1,116 +1,116 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 
-const slides = ["hello", "about me", "things i build", "toolbox", "my philosophy", "say hello"];
-const projects = [
-  ["NoctisLaby Engine", "GAME TECHNOLOGY", "A game engine I'm building from the ground up.", "https://github.com/spideythedev/noctislaby", "NL"],
-  ["Trigo.js", "JAVASCRIPT LIBRARY", "A zero-dependency trigger library for event-driven interactions.", "https://github.com/spideythedev/Trigo", "T."],
-  ["BC100", "WEB · EXPERIMENTAL LEARNING", "A project exploring what web technology could feel like if it existed in 100 BC.", "https://bc-100.vercel.app", "BC"],
-  ["Human First Software", "ACCESSIBILITY · PWA", "A project focused on more accessible digital experiences.", "", "HFS"],
-  ["WAYMARK", "EDUCATION · INDIA", "A decision-support project for students after Class 12.", "", "W."],
-  ["Yoppic", "INDEPENDENT STUDIO", "The studio I'm building with a team across software and design.", "https://yoppic.vercel.app", "Y"]
+const scenes = ["opening", "origin", "tools", "notes", "credits"];
+const friends = [
+  ["Faiz Choudhary", "IN THE STORY"],
+  ["Nithin.K", "IN THE STORY"],
+  ["Aditya Uniyal", "IN THE STORY"],
+  ["Caleb Ephrem", "IN THE STORY"],
+  ["Sudipto Mondal", "ONLINE FRIEND"],
+  ["Ahzan Abdul Lathif", "IN THE STORY"],
+  ["Afsal", "IN THE STORY"],
+  ["Ammar", "IN THE STORY"],
+  ["Ijaz Ahmed", "IN THE STORY"]
 ];
-const stack = [
-  ["LANGUAGES", "JavaScript", "TypeScript", "Python", "C#", "HTML", "CSS"],
-  ["FRONTEND", "React", "Next.js", "Vite", "Tailwind CSS"],
-  ["BACKEND & DATA", "Node.js", "Firebase", "REST APIs"],
-  ["OTHER WORLDS", "Godot", "Discord.py", "Git", "Vercel"]
+const tools = [
+  ["01", "LANGUAGES", "JavaScript", "TypeScript", "Python", "C#", "HTML", "CSS"],
+  ["02", "FRONT OF THE WEB", "React", "Next.js", "Vite", "Tailwind CSS"],
+  ["03", "BEHIND THE SCENES", "Node.js", "Firebase", "REST APIs"],
+  ["04", "MAKING WORLDS", "Godot", "Discord.py", "Git", "Vercel"]
 ];
 
-function Label({ number, children }) {
-  return <div className="slide-label"><span>{number}</span><span>{children}</span></div>;
+function SceneTag({ children }) {
+  return <div className="scene-tag"><span>✳</span>{children}</div>;
+}
+
+function Doodle({ kind = "star", className = "" }) {
+  if (kind === "flower") return <svg className={"doodle " + className} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M50 50C28 22 42 8 50 8C63 8 70 27 50 50C77 28 92 43 91 52C90 66 68 70 50 50C73 78 58 92 49 91C35 90 31 68 50 50C22 74 8 59 9 49C10 35 32 30 50 50Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/><circle cx="50" cy="50" r="7" fill="currentColor"/></svg>;
+  if (kind === "orbit") return <svg className={"doodle " + className} viewBox="0 0 150 100" fill="none" aria-hidden="true"><path d="M8 53C22 5 122 3 141 45C160 87 39 111 11 71C-4 49 24 27 59 23" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="2 5"/><circle cx="76" cy="51" r="11" stroke="currentColor" strokeWidth="2.5"/><path d="M80 11L86 2M127 79L138 86" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg>;
+  return <svg className={"doodle " + className} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M50 5L58 37L88 17L68 46L96 55L65 61L82 91L54 70L43 98L39 66L8 84L30 57L3 42L36 41L24 10L47 32Z" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round"/></svg>;
 }
 
 export default function App() {
   const [active, setActive] = useState(0);
-  const touchY = useRef(null);
+  const [credits, setCredits] = useState(false);
+  const touchStart = useRef(null);
   const locked = useRef(false);
-  const go = useCallback((value) => setActive((current) => Math.max(0, Math.min(slides.length - 1, value))), []);
+  const go = useCallback((next) => setActive((current) => Math.max(0, Math.min(scenes.length - 1, next))), []);
+
   useEffect(() => {
-    const key = (event) => {
+    const onKey = (event) => {
       if (["ArrowDown", "ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(active + 1); }
       if (["ArrowUp", "ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); go(active - 1); }
       if (event.key === "Home") go(0);
-      if (event.key === "End") go(slides.length - 1);
+      if (event.key === "End") go(scenes.length - 1);
     };
-    const wheel = (event) => {
-      if (Math.abs(event.deltaY) < 24 || locked.current) return;
+    const onWheel = (event) => {
+      if (Math.abs(event.deltaY) < 18 || locked.current) return;
       event.preventDefault();
       locked.current = true;
       go(active + (event.deltaY > 0 ? 1 : -1));
-      window.setTimeout(() => { locked.current = false; }, 850);
+      window.setTimeout(() => { locked.current = false; }, 1050);
     };
-    window.addEventListener("keydown", key);
-    window.addEventListener("wheel", wheel, { passive: false });
-    return () => { window.removeEventListener("keydown", key); window.removeEventListener("wheel", wheel); };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("wheel", onWheel); };
   }, [active, go]);
-  const touchStart = (event) => { touchY.current = event.touches[0].clientY; };
-  const touchEnd = (event) => {
-    if (touchY.current === null) return;
-    const delta = touchY.current - event.changedTouches[0].clientY;
-    if (Math.abs(delta) > 55) go(active + (delta > 0 ? 1 : -1));
-    touchY.current = null;
+
+  const onTouchStart = (event) => { touchStart.current = event.touches[0].clientY; };
+  const onTouchEnd = (event) => {
+    if (touchStart.current === null) return;
+    const delta = touchStart.current - event.changedTouches[0].clientY;
+    if (Math.abs(delta) > 45) go(active + (delta > 0 ? 1 : -1));
+    touchStart.current = null;
   };
 
-  return <main className="portfolio" onTouchStart={touchStart} onTouchEnd={touchEnd}>
-    <div className="grain" />
-    <header className="deck-header">
-      <a className="signature" href="#top" onClick={(e) => { e.preventDefault(); go(0); }}>f<span>.</span>m<span className="signature-star">✳</span></a>
-      <div className="header-center">FAHAD MALIK <span>—</span> PERSONAL WEBSITE</div>
-      <div className="header-count"><b>0{active + 1}</b> / 06</div>
-    </header>
-    <div className="slide-progress">{slides.map((label, i) => <button key={label} className={"progress-segment " + (i === active ? "current" : i < active ? "passed" : "")} onClick={() => go(i)} aria-label={"Go to " + label} />)}</div>
-    <div className="slide-viewport"><div className="slide-track" style={{ transform: "translate3d(0, -" + (active * 100) + "%, 0)" }}>
-      <section className={"slide slide-intro " + (active === 0 ? "is-active" : "")}>
-        <div className="intro-index">INDEPENDENT DEVELOPER / INDIA / 2026</div>
-        <div className="intro-content">
-          <p className="overline"><i className="status-dot" /> HEY, I'M FAHAD. ONLINE, I'M SPIDEY.</p>
-          <h1>i make<br /><em>things</em> with<br />software<span className="full-stop">.</span></h1>
-          <div className="intro-bottom"><p>Websites, tools, experiments, game technology —<br className="desktop-break" /> and whatever else I can't stop thinking about.</p><button className="round-next" onClick={() => go(1)} aria-label="Next slide"><ArrowDown /></button></div>
+  return <main className="film" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+    <div className="paper-grain" />
+    <header className="film-top"><span className="film-mark">FM<span>✳</span></span><span className="film-top-title">A SMALL FILM ABOUT FAHAD</span><span className="film-counter">SCENE 0{active + 1} / 05</span></header>
+    <div className="film-progress">{scenes.map((scene, index) => <button key={scene} onClick={() => go(index)} className={index === active ? "active" : index < active ? "passed" : ""} aria-label={"Go to " + scene} />)}</div>
+    <div className="film-window"><div className="film-reel" style={{ transform: "translateY(-" + active * 100 + "%)" }}>
+      <section className={"scene opening " + (active === 0 ? "shown" : "")}>
+        <div className="opening-sky"><div className="sun" /><div className="scribble-cloud cloud-one" /><div className="scribble-cloud cloud-two" /><div className="hill hill-back" /><div className="hill hill-front" /></div>
+        <div className="opening-copy"><p className="eyebrow handwritten">a little moving picture / no. 001</p><h1>hello,<br />i'm <em>fahad.</em></h1><p className="opening-sub">somewhere between curiosity<br />and making things work.</p><div className="name-stamp">also known as<br /><strong>SPIDEY</strong></div></div>
+        <Doodle kind="star" className="opening-star" /><Doodle kind="flower" className="opening-flower" />
+        <button className="continue-note" onClick={() => go(1)}>THE STORY STARTS HERE <ArrowDown size={15}/></button>
+        <span className="scene-number">01 — OPENING CREDITS</span>
+      </section>
+
+      <section className={"scene origin " + (active === 1 ? "shown" : "")}>
+        <SceneTag>chapter one · the beginning</SceneTag>
+        <div className="origin-grid"><div className="origin-title"><p className="eyebrow">BEFORE THE BIG IDEAS</p><h2>curiosity<br />was the <em>first tool.</em></h2><Doodle kind="orbit" className="origin-orbit"/></div><div className="origin-story"><p className="story-lead">i started coding when i was around eight.</p><p>For a long time, I didn't have a laptop. I still wanted to know how things worked — so I explored whatever I could, learned little by little, and kept the curiosity alive.</p><p>When I finally got more room to build, I didn't want to make just one kind of thing. I wanted to understand the whole process: the idea, the design, the logic, the details, and the feeling when it all comes together.</p><p>That's still how I learn. Try it. Break it. Fix it. Find a new question. Repeat.</p><div className="story-sign">— fahad <span>↗</span></div></div></div>
+        <div className="origin-bottom"><span>SELF-TAUGHT, BY DOING</span><span>BASED IN INDIA</span><span>STILL FIGURING IT OUT</span></div>
+        <span className="scene-number">02 — THE ORIGIN STORY</span>
+      </section>
+
+      <section className={"scene tools-scene " + (active === 2 ? "shown" : "")}>
+        <SceneTag>chapter two · the things in my toolbox</SceneTag>
+        <div className="tools-heading"><div><p className="eyebrow">A WORKING COLLECTION</p><h2>my tools,<br /><em>my playground.</em></h2></div><p className="tools-aside handwritten">not a checklist.<br />just things i use. ↙</p></div>
+        <div className="tool-list">{tools.map((group) => <div className="tool-row" key={group[0]}><span className="tool-index">{group[0]}</span><span className="tool-category">{group[1]}</span><div className="tool-names">{group.slice(2).map((tool) => <span key={tool}>{tool}</span>)}</div></div>)}</div>
+        <div className="tools-foot"><Doodle kind="flower" className="tools-flower"/><span>THE STACK KEEPS CHANGING. THAT'S THE POINT.</span></div>
+        <span className="scene-number">03 — THE TOOLBOX</span>
+      </section>
+
+      <section className={"scene advice " + (active === 3 ? "shown" : "")}>
+        <SceneTag>chapter three · a few notes to keep</SceneTag>
+        <div className="advice-center"><p className="eyebrow">THINGS I'D TELL MY EARLIER SELF</p><h2>don't wait<br />to feel <em>ready.</em></h2><Doodle kind="star" className="advice-star"/><div className="advice-notes"><p><span>01</span> Start with what you have. A small beginning is still a beginning.</p><p><span>02</span> Don't worship tools. Learn the idea underneath them.</p><p><span>03</span> Don't fall prey to flattery. Build always.</p><p><span>04</span> Don't underestimate anyone — including yourself.</p><p><span>05</span> Make things, share what you learn, and stay curious.</p></div><div className="advice-signature handwritten">keep going. — spidey</div></div>
+        <span className="scene-number">04 — NOTES FROM THE MAKER</span>
+      </section>
+
+      <section className={"scene credits " + (active === 4 ? "shown" : "")}>
+        <div className="credit-top"><SceneTag>the people who make the story better</SceneTag><p className="eyebrow">A VERY IMPORTANT PART OF THE CREDITS</p></div>
+        <div className={"credits-roll " + (credits ? "rolling" : "")}>
+          <p className="credit-intro handwritten">no one makes a good story alone.</p>
+          <h2>my people.</h2>
+          <div className="friend-list">{friends.map(([name, note], index) => <div className="friend" key={name}><span className="friend-no">0{index + 1}</span><span className="friend-name">{name}</span><span className="friend-note">{note}</span></div>)}</div>
+          <p className="credit-thanks handwritten">glad our paths crossed. ♡</p>
+          <div className="the-end"><Doodle kind="flower"/><span>THE END</span><small>...for this little film, anyway.</small></div>
         </div>
-        <div className="intro-side-note">NOT A TEMPLATE.<br />JUST MY CORNER.</div><div className="intro-big-number">01</div>
-      </section>
-
-      <section className={"slide slide-about " + (active === 1 ? "is-active" : "")}>
-        <Label number="01 / WHO'S THIS?">a little about me</Label>
-        <div className="about-layout">
-          <div className="about-heading"><p className="overline">FAHAD MALIK <span className="muted">(SPIDEY)</span></p><h2>curiosity<br />got me <em>here.</em></h2><div className="handwritten">still learning. still building. ↗</div></div>
-          <div className="about-copy">
-            <p className="about-lead">i started coding when i was around eight. i didn't have a laptop for a long time, but that didn't really stop me from being curious.</p>
-            <p>I learned by exploring, trying things, breaking them, fixing them, and then getting distracted by another idea. Eventually, that curiosity turned into real projects, open-source experiments, and a studio of my own.</p>
-            <p>I'm a full-stack developer. I enjoy the whole process — figuring out an idea, designing how it should feel, writing the code, and making the details work. I'm the founder of Yoppic and IDMAO, and COO at Fubrio.</p>
-            <p>I don't want to spend my time only talking about what I could build. I'd rather build it and see where it goes.</p>
-            <div className="about-foot"><span>SELF-TAUGHT BY DOING</span><span>BASED IN INDIA</span></div>
-          </div>
-        </div><span className="slide-decoration">✳</span>
-      </section>
-
-      <section className={"slide slide-work " + (active === 2 ? "is-active" : "")}>
-        <Label number="02 / THE WORK">some things i've been making</Label>
-        <div className="work-heading"><h2>ideas don't<br />build <em>themselves.</em></h2><p>These are a few corners of my brain that turned into projects. Some are ongoing, some are experiments. There's always something to improve.</p></div>
-        <div className="project-grid">{projects.map((p, i) => <a className="project" href={p[3] || undefined} target={p[3] ? "_blank" : undefined} rel={p[3] ? "noreferrer" : undefined} key={p[0]}><div className="project-top"><span>0{i + 1} / {p[1]}</span><ArrowUpRight size={16} /></div><div className="project-mark">{p[4]}</div><h3>{p[0]}</h3><p>{p[2]}</p></a>)}</div>
-      </section>
-
-      <section className={"slide slide-stack " + (active === 3 ? "is-active" : "")}>
-        <Label number="03 / THE TOOLBOX">what i work with</Label>
-        <div className="stack-heading"><h2>my tools.<br /><em>my playground.</em></h2><p>I don't marry a framework. I pick what makes sense, learn what I need, and keep moving.</p></div>
-        <div className="stack-groups">{stack.map((group, i) => <div className="stack-group" key={group[0]}><span className="stack-number">0{i + 1}</span><div className="stack-content"><span className="stack-label">{group[0]}</span><div className="stack-items">{group.slice(1).map((item) => <span key={item}>{item}</span>)}</div></div></div>)}</div>
-        <p className="stack-note">the list changes. that's a good thing.</p>
-      </section>
-
-      <section className={"slide slide-mind " + (active === 4 ? "is-active" : "")}>
-        <Label number="04 / THE WAY I THINK">a thing i try to live by</Label>
-        <div className="mind-content"><p className="overline">A PERSONAL RULE, NOT A SLOGAN</p><h2>don't fall prey<br />to <span>flattery.</span><br /><em>build always.</em></h2><div className="mind-bottom"><p>Don't underestimate anyone. And don't let praise become the thing you work for. Make something real, learn from what doesn't work, and keep getting better.</p><span>— fahad / spidey</span></div></div><div className="mind-mark">✳</div>
-      </section>
-
-      <section className={"slide slide-contact " + (active === 5 ? "is-active" : "")}>
-        <Label number="05 / THAT'S ME">the internet is a small place</Label>
-        <div className="contact-layout"><div><p className="overline">HAVE AN IDEA? LET'S TALK.</p><h2>say<br />hello<span>.</span></h2><p className="contact-copy">Got a project, a question, or something interesting to share? Just write. No formal introduction needed.</p><a className="email-button" href="mailto:hellospideydev@gmail.com">hellospideydev@gmail.com <ArrowUpRight size={18} /></a></div>
-          <div className="contact-details"><a href="https://github.com/spideythedev" target="_blank" rel="noreferrer"><Github /><span>GitHub</span><ArrowUpRight /></a><a href="https://linkedin.com/in/fahadmalik-tokyo/" target="_blank" rel="noreferrer"><Linkedin /><span>LinkedIn</span><ArrowUpRight /></a><a href="mailto:hellospideydev@gmail.com"><Mail /><span>Email</span><ArrowUpRight /></a><div className="contact-signoff">made by me, not a committee. <span>♡</span></div></div>
-        </div><footer className="deck-footer"><span>FAHAD MALIK / SPIDEY</span><span>© 2026</span><span>YOU MADE IT TO THE END.</span></footer>
+        <button className="credits-play" onClick={() => setCredits(!credits)}>{credits ? "PAUSE THE CREDITS" : "ROLL THE CREDITS"} <Sparkles size={14}/></button>
+        <span className="scene-number">05 — END CREDITS</span>
       </section>
     </div></div>
-    <nav className="slide-nav"><div className="slide-nav-label">{slides[active]}</div><div className="slide-nav-actions"><button onClick={() => go(active - 1)} disabled={active === 0} aria-label="Previous slide"><ArrowLeft /></button><button onClick={() => go(active + 1)} disabled={active === slides.length - 1} aria-label="Next slide"><ArrowRight /></button></div></nav>
-    <div className="side-rail"><span>SCROLL / ARROW KEYS</span><i /><span>0{active + 1} — 06</span></div>
+    <nav className="film-controls"><span className="control-hint">USE THE ARROW KEYS OR SWIPE</span><div className="control-actions"><button onClick={() => go(active - 1)} disabled={active === 0} aria-label="Previous scene"><ArrowLeft size={17}/></button><button onClick={() => go(active + 1)} disabled={active === 4} aria-label="Next scene"><ArrowRight size={17}/></button></div></nav>
   </main>;
 }
