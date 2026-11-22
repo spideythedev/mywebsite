@@ -16,12 +16,12 @@ const sections = [
 ];
 
 const tools = [
-  { name: "JavaScript", note: "the language i keep coming back to", color: "yellow" },
-  { name: "React", note: "for building things people can use", color: "blue" },
-  { name: "Vite", note: "fast starts, fast feedback", color: "purple" },
-  { name: "HTML", note: "the bones of the web", color: "orange" },
-  { name: "Tailwind CSS", note: "when utility classes make sense", color: "cyan" },
   { name: "Lucide", note: "little symbols with personality", color: "green" },
+  { name: "React", note: "for building things people can use", color: "blue" },
+  { name: "Tailwind CSS", note: "when utility classes make sense", color: "cyan" },
+  { name: "JavaScript", note: "the language i keep coming back to", color: "yellow" },
+  { name: "HTML", note: "the bones of the web", color: "orange" },
+  { name: "Vite", note: "fast starts, fast feedback", color: "purple" },
   { name: "Icons8", note: "for finding the right visual detail", color: "pink" },
 ];
 
@@ -31,41 +31,57 @@ function Doodle({ className = "", children = "✳" }) {
 
 function Intro({ onFinish }) {
   const [step, setStep] = useState(0);
-  const [drawing, setDrawing] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   const advance = () => {
-    if (step < 2) setStep((value) => value + 1);
-    else onFinish();
+    if (leaving) return;
+    setLeaving(true);
+    window.setTimeout(() => {
+      if (step === 2) onFinish();
+      else setStep((value) => value + 1);
+      setLeaving(false);
+    }, 460);
   };
 
+  useEffect(() => {
+    const handleKey = (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        advance();
+      }
+      if (event.key === "Escape") onFinish();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [step, leaving]);
+
+  const scenes = [
+    { kicker: "SPIDEY PICTURES PRESENTS", title: <>A film about<br /><em>making things.</em></>, note: "A personal documentary in several unnecessary acts." },
+    { kicker: "STARRING", title: <><strong>Fahad Malik</strong><br />also known as <em>SpydeY.</em></>, note: "Software developer, curious human, professional idea collector." },
+    { kicker: "WRITTEN, DIRECTED & MOSTLY DEBUGGED BY", title: <>One person.<br /><em>Many tabs open.</em></>, note: "Welcome to my little corner of the internet." },
+  ];
+
   return (
-    <div className="intro-screen" onClick={advance}>
+    <div className="intro-screen film-intro" onClick={advance}>
       <div className="intro-grain" />
-      <div className="intro-meta"><span>AN INTRODUCTION, SORT OF</span><span>NO. 001 / FAHAD'S WORLD</span></div>
-      <div className="intro-center">
-        <div className={\`scribble-stage \${drawing ? "is-drawing" : ""}\`}>
-          <svg viewBox="0 0 300 190" role="img" aria-label="A hand-drawn sun">
-            <path className="sun-line" d="M150 37 C188 34 218 66 214 103 C210 143 178 160 143 151 C104 143 82 113 91 78 C99 48 123 36 150 37Z" />
-            <path className="sun-line sun-line-two" d="M150 45 C184 43 209 72 207 103 C205 133 177 150 145 144 C112 137 91 112 99 81 C106 55 126 43 150 45Z" />
-            <path className="ray" d="M150 15l-3 12M224 39l-10 9M251 104l-16-1M218 160l-11-9M79 155l12-10M52 99l17 1M82 43l10 10" />
-            <circle cx="135" cy="91" r="3" fill="currentColor" /><circle cx="170" cy="91" r="3" fill="currentColor" />
-            <path d="M139 112q13 13 27 0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-          </svg>
-          <Doodle className="intro-star star-a">✳</Doodle>
-          <Doodle className="intro-star star-b">✦</Doodle>
-          <Doodle className="intro-star star-c">·</Doodle>
+      <div className="intro-meta"><span>SPIDEY PICTURES PRESENTS</span><span>AN INTERNET ORIGINAL · NO. 001</span></div>
+      <div className="intro-center film-stage">
+        <span className="intro-credit-side">A PERSONAL DOCUMENTARY<br />IN SEVERAL UNNECESSARY ACTS</span>
+        <div className={`film-copy ${leaving ? "film-leaving" : ""}`} key={step}>
+          <span className="intro-credit-kicker">{scenes[step].kicker}</span>
+          <h1 className="intro-title film-title">{scenes[step].title}</h1>
+          <p className="intro-credit-note">{scenes[step].note}</p>
         </div>
-        <p className="intro-kicker">{step === 0 ? "a blank page, basically." : step === 1 ? "well, that's a start." : "okay, let's meet."}</p>
-        <h1 className="intro-title">
-          {step === 0 && <>make a little<br /><em>mark.</em></>}
-          {step === 1 && <>oh, hi<span className="red-dot">.</span><br /><em>i'm fahad.</em></>}
-          {step === 2 && <>welcome to<br /><em>my little world.</em></>}
-        </h1>
-        <p className="intro-hint"><MousePointer2 size={15} /> {step === 0 ? "tap anywhere to begin" : step === 1 ? "one more time" : "come on in"}</p>
-        <button className="skip-intro" onClick={(event) => { event.stopPropagation(); onFinish(); }}>skip the intro <ArrowUpRight size={14}/></button>
+        <div className="intro-credit-stamp"><b>100%</b><span>HUMAN<br />MADE-ISH</span><i>✳</i></div>
+        <span className="intro-credit-doodle">↗</span>
+        <p className="intro-hint"><MousePointer2 size={15} /> {step === 2 ? "tap to enter" : "tap anywhere to continue"}</p>
       </div>
-      <div className="intro-bottom"><span>MADE WITH CURIOSITY</span><span>2026 — AND STILL MAKING</span></div>
-      <button className="intro-draw-trigger" aria-label="Draw on the page" onClick={(event) => { event.stopPropagation(); setDrawing(true); window.setTimeout(() => setDrawing(false), 900); }}><Pencil size={17}/></button>
+      <div className="intro-bottom">
+        <span>SCENE 0{step + 1} / 03</span>
+        <button className="intro-next" onClick={(event) => { event.stopPropagation(); advance(); }}>{step === 2 ? "ENTER MY WORLD" : "KEEP ROLLING"} <ArrowUpRight size={15} /></button>
+        <button className="skip-intro" onClick={(event) => { event.stopPropagation(); onFinish(); }}>skip the credits ↗</button>
+      </div>
+      <div className="intro-progress"><span style={{ width: `${((step + 1) / 3) * 100}%` }} /></div>
     </div>
   );
 }
