@@ -5,9 +5,9 @@ const slides = ["hello", "about me", "things i build", "toolbox", "my philosophy
 const projects = [
   ["NoctisLaby Engine", "GAME TECHNOLOGY", "A game engine I'm building from the ground up.", "https://github.com/spideythedev/noctislaby", "NL"],
   ["Trigo.js", "JAVASCRIPT LIBRARY", "A zero-dependency trigger library for event-driven interactions.", "https://github.com/spideythedev/Trigo", "T."],
-  ["Human First Software", "ACCESSIBILITY · PWA", "A project focused on more accessible digital experiences.", "https://github.com/spideythedev", "HFS"],
-  ["The Internet Museum", "WEB · CULTURE", "An experimental museum for exploring internet history.", "https://github.com/spideythedev", "TIM"],
-  ["WAYMARK", "EDUCATION · INDIA", "A decision-support project for students after Class 12.", "https://github.com/spideythedev", "W."],
+  ["BC100", "WEB · EXPERIMENTAL LEARNING", "A project exploring what web technology could feel like if it existed in 100 BC.", "https://bc-100.vercel.app", "BC"],
+  ["Human First Software", "ACCESSIBILITY · PWA", "A project focused on more accessible digital experiences.", "", "HFS"],
+  ["WAYMARK", "EDUCATION · INDIA", "A decision-support project for students after Class 12.", "", "W."],
   ["Yoppic", "INDEPENDENT STUDIO", "The studio I'm building with a team across software and design.", "https://yoppic.vercel.app", "Y"]
 ];
 const stack = [
@@ -78,7 +78,7 @@ export default function App() {
           <div className="about-copy">
             <p className="about-lead">i started coding when i was around eight. i didn't have a laptop for a long time, but that didn't really stop me from being curious.</p>
             <p>I learned by exploring, trying things, breaking them, fixing them, and then getting distracted by another idea. Eventually, that curiosity turned into real projects, open-source experiments, and a studio of my own.</p>
-            <p>I'm a full-stack developer. I enjoy the whole process — figuring out an idea, designing how it should feel, writing the code, and making the details work.</p>
+            <p>I'm a full-stack developer. I enjoy the whole process — figuring out an idea, designing how it should feel, writing the code, and making the details work. I also build Yoppic, work with Fubrio, and run IDMAO.</p>
             <p>I don't want to spend my time only talking about what I could build. I'd rather build it and see where it goes.</p>
             <div className="about-foot"><span>SELF-TAUGHT BY DOING</span><span>BASED IN INDIA</span></div>
           </div>
@@ -88,7 +88,7 @@ export default function App() {
       <section className={"slide slide-work " + (active === 2 ? "is-active" : "")}>
         <Label number="02 / THE WORK">some things i've been making</Label>
         <div className="work-heading"><h2>ideas don't<br />build <em>themselves.</em></h2><p>These are a few corners of my brain that turned into projects. Some are ongoing, some are experiments. There's always something to improve.</p></div>
-        <div className="project-grid">{projects.map((p, i) => <a className="project" href={p[3]} target="_blank" rel="noreferrer" key={p[0]}><div className="project-top"><span>0{i + 1} / {p[1]}</span><ArrowUpRight size={16} /></div><div className="project-mark">{p[4]}</div><h3>{p[0]}</h3><p>{p[2]}</p></a>)}</div>
+        <div className="project-grid">{projects.map((p, i) => <a className="project" href={p[3] || undefined} target={p[3] ? "_blank" : undefined} rel={p[3] ? "noreferrer" : undefined} key={p[0]}><div className="project-top"><span>0{i + 1} / {p[1]}</span><ArrowUpRight size={16} /></div><div className="project-mark">{p[4]}</div><h3>{p[0]}</h3><p>{p[2]}</p></a>)}</div>
       </section>
 
       <section className={"slide slide-stack " + (active === 3 ? "is-active" : "")}>
