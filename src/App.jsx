@@ -1,274 +1,116 @@
-import { useEffect, useState } from "react";
-import {
-  ArrowDown, ArrowUpRight, Github, Linkedin, Mail, Menu,
-  MousePointer2, Pencil, X
-} from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Github, Linkedin, Mail } from "lucide-react";
 
-const sections = [
-  ["hello", "hello there"],
-  ["doing", "what i do"],
-  ["toolbox", "my toolbox"],
-  ["story", "my story"],
-  ["beliefs", "my philosophy"],
-  ["inspired", "things i love"],
-  ["next", "what's next"],
-  ["contact", "say hello"],
+const slides = ["hello", "about me", "things i build", "toolbox", "my philosophy", "say hello"];
+const projects = [
+  ["NoctisLaby Engine", "GAME TECHNOLOGY", "A game engine I'm building from the ground up.", "https://github.com/spideythedev/noctislaby", "NL"],
+  ["Trigo.js", "JAVASCRIPT LIBRARY", "A zero-dependency trigger library for event-driven interactions.", "https://github.com/spideythedev/Trigo", "T."],
+  ["Human First Software", "ACCESSIBILITY · PWA", "A project focused on more accessible digital experiences.", "https://github.com/spideythedev", "HFS"],
+  ["The Internet Museum", "WEB · CULTURE", "An experimental museum for exploring internet history.", "https://github.com/spideythedev", "TIM"],
+  ["WAYMARK", "EDUCATION · INDIA", "A decision-support project for students after Class 12.", "https://github.com/spideythedev", "W."],
+  ["Yoppic", "INDEPENDENT STUDIO", "The studio I'm building with a team across software and design.", "https://yoppic.vercel.app", "Y"]
+];
+const stack = [
+  ["LANGUAGES", "JavaScript", "Python", "C#", "HTML", "CSS"],
+  ["FRONTEND", "React", "Next.js", "Vite", "Tailwind CSS"],
+  ["BACKEND & DATA", "Node.js", "Firebase", "REST APIs"],
+  ["OTHER WORLDS", "Godot", "Discord.py", "Git", "Vercel"]
 ];
 
-const tools = [
-  { name: "Lucide", note: "little symbols with personality", color: "green" },
-  { name: "React", note: "for building things people can use", color: "blue" },
-  { name: "Tailwind CSS", note: "when utility classes make sense", color: "cyan" },
-  { name: "JavaScript", note: "the language i keep coming back to", color: "yellow" },
-  { name: "HTML", note: "the bones of the web", color: "orange" },
-  { name: "Vite", note: "fast starts, fast feedback", color: "purple" },
-  { name: "Icons8", note: "for finding the right visual detail", color: "pink" },
-];
-
-function Doodle({ className = "", children = "✳" }) {
-  return <span aria-hidden="true" className={`doodle ${className}`}>{children}</span>;
+function Label({ number, children }) {
+  return <div className="slide-label"><span>{number}</span><span>{children}</span></div>;
 }
 
-function Intro({ onFinish }) {
-  const [step, setStep] = useState(0);
-  const [leaving, setLeaving] = useState(false);
-
-  const advance = () => {
-    if (leaving) return;
-    setLeaving(true);
-    window.setTimeout(() => {
-      if (step === 2) onFinish();
-      else setStep((value) => value + 1);
-      setLeaving(false);
-    }, 460);
-  };
-
+export default function App() {
+  const [active, setActive] = useState(0);
+  const touchY = useRef(null);
+  const locked = useRef(false);
+  const go = useCallback((value) => setActive((current) => Math.max(0, Math.min(slides.length - 1, value))), []);
   useEffect(() => {
-    const handleKey = (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        advance();
-      }
-      if (event.key === "Escape") onFinish();
+    const key = (event) => {
+      if (["ArrowDown", "ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(active + 1); }
+      if (["ArrowUp", "ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); go(active - 1); }
+      if (event.key === "Home") go(0);
+      if (event.key === "End") go(slides.length - 1);
     };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [step, leaving]);
+    const wheel = (event) => {
+      if (Math.abs(event.deltaY) < 24 || locked.current) return;
+      event.preventDefault();
+      locked.current = true;
+      go(active + (event.deltaY > 0 ? 1 : -1));
+      window.setTimeout(() => { locked.current = false; }, 850);
+    };
+    window.addEventListener("keydown", key);
+    window.addEventListener("wheel", wheel, { passive: false });
+    return () => { window.removeEventListener("keydown", key); window.removeEventListener("wheel", wheel); };
+  }, [active, go]);
+  const touchStart = (event) => { touchY.current = event.touches[0].clientY; };
+  const touchEnd = (event) => {
+    if (touchY.current === null) return;
+    const delta = touchY.current - event.changedTouches[0].clientY;
+    if (Math.abs(delta) > 55) go(active + (delta > 0 ? 1 : -1));
+    touchY.current = null;
+  };
 
-  const scenes = [
-    { kicker: "SPIDEY PICTURES PRESENTS", title: <>A film about<br /><em>making things.</em></>, note: "A personal documentary in several unnecessary acts." },
-    { kicker: "STARRING", title: <><strong>Fahad Malik</strong><br />also known as <em>SpydeY.</em></>, note: "Software developer, curious human, professional idea collector." },
-    { kicker: "WRITTEN, DIRECTED & MOSTLY DEBUGGED BY", title: <>One person.<br /><em>Many tabs open.</em></>, note: "Welcome to my little corner of the internet." },
-  ];
-
-  return (
-    <div className="intro-screen film-intro" onClick={advance}>
-      <div className="intro-grain" />
-      <div className="intro-meta"><span>SPIDEY PICTURES PRESENTS</span><span>AN INTERNET ORIGINAL · NO. 001</span></div>
-      <div className="intro-center film-stage">
-        <span className="intro-credit-side">A PERSONAL DOCUMENTARY<br />IN SEVERAL UNNECESSARY ACTS</span>
-        <div className={`film-copy ${leaving ? "film-leaving" : ""}`} key={step}>
-          <span className="intro-credit-kicker">{scenes[step].kicker}</span>
-          <h1 className="intro-title film-title">{scenes[step].title}</h1>
-          <p className="intro-credit-note">{scenes[step].note}</p>
+  return <main className="portfolio" onTouchStart={touchStart} onTouchEnd={touchEnd}>
+    <div className="grain" />
+    <header className="deck-header">
+      <a className="signature" href="#top" onClick={(e) => { e.preventDefault(); go(0); }}>f<span>.</span>m<span className="signature-star">✳</span></a>
+      <div className="header-center">FAHAD MALIK <span>—</span> PERSONAL WEBSITE</div>
+      <div className="header-count"><b>0{active + 1}</b> / 06</div>
+    </header>
+    <div className="slide-progress">{slides.map((label, i) => <button key={label} className={"progress-segment " + (i === active ? "current" : i < active ? "passed" : "")} onClick={() => go(i)} aria-label={"Go to " + label} />)}</div>
+    <div className="slide-viewport"><div className="slide-track" style={{ transform: "translate3d(0, -" + (active * 100) + "%, 0)" }}>
+      <section className={"slide slide-intro " + (active === 0 ? "is-active" : "")}>
+        <div className="intro-index">INDEPENDENT DEVELOPER / INDIA / 2026</div>
+        <div className="intro-content">
+          <p className="overline"><i className="status-dot" /> HEY, I'M FAHAD. ONLINE, I'M SPIDEY.</p>
+          <h1>i make<br /><em>things</em> with<br />software<span className="full-stop">.</span></h1>
+          <div className="intro-bottom"><p>Websites, tools, experiments, game technology —<br className="desktop-break" /> and whatever else I can't stop thinking about.</p><button className="round-next" onClick={() => go(1)} aria-label="Next slide"><ArrowDown /></button></div>
         </div>
-        <div className="intro-credit-stamp"><b>100%</b><span>HUMAN<br />MADE-ISH</span><i>✳</i></div>
-        <span className="intro-credit-doodle">↗</span>
-        <p className="intro-hint"><MousePointer2 size={15} /> {step === 2 ? "tap to enter" : "tap anywhere to continue"}</p>
-      </div>
-      <div className="intro-bottom">
-        <span>SCENE 0{step + 1} / 03</span>
-        <button className="intro-next" onClick={(event) => { event.stopPropagation(); advance(); }}>{step === 2 ? "ENTER MY WORLD" : "KEEP ROLLING"} <ArrowUpRight size={15} /></button>
-        <button className="skip-intro" onClick={(event) => { event.stopPropagation(); onFinish(); }}>skip the credits ↗</button>
-      </div>
-      <div className="intro-progress"><span style={{ width: `${((step + 1) / 3) * 100}%` }} /></div>
-    </div>
-  );
-}
+        <div className="intro-side-note">NOT A TEMPLATE.<br />JUST MY CORNER.</div><div className="intro-big-number">01</div>
+      </section>
 
-function HandUnderline({ children }) {
-  return <span className="hand-underline">{children}</span>;
-}
-
-function SectionHeading({ eyebrow, children, number }) {
-  return (
-    <div className="section-heading">
-      <div className="section-eyebrow"><span>{number}</span><span>{eyebrow}</span></div>
-      <h2>{children}</h2>
-    </div>
-  );
-}
-
-function App() {
-  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem("fahad-intro-seen"));
-  const [active, setActive] = useState("hello");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [note, setNote] = useState(false);
-
-  useEffect(() => {
-    if (showIntro) document.body.classList.add("intro-open");
-    else document.body.classList.remove("intro-open");
-    return () => document.body.classList.remove("intro-open");
-  }, [showIntro]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) setActive(entry.target.id);
-      });
-    }, { rootMargin: "-35% 0px -55% 0px" });
-    document.querySelectorAll("main section[id]").forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, [showIntro]);
-
-  const finishIntro = () => {
-    sessionStorage.setItem("fahad-intro-seen", "yes");
-    setShowIntro(false);
-  };
-
-  const jumpTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    setMenuOpen(false);
-  };
-
-  return (
-    <>
-      {showIntro && <Intro onFinish={finishIntro} />}
-      <div className="paper-world">
-        <div className="top-strip"><span>a small corner of my internet</span><span className="top-strip-right">INDIA <span className="tiny-sun">✳</span> STILL FIGURING THINGS OUT</span></div>
-        <header className="site-header">
-          <a className="wordmark" href="#hello" onClick={(event) => { event.preventDefault(); jumpTo("hello"); }} aria-label="Fahad Malik home">f<span>.</span>m<span className="wordmark-star">✳</span></a>
-          <nav className={menuOpen ? "main-nav nav-open" : "main-nav"} aria-label="Main navigation">
-            {sections.map(([id, label], index) => (
-              <a key={id} href={`#${id}`} className={active === id ? "active" : ""} onClick={(event) => { event.preventDefault(); jumpTo(id); }}>
-                <span className="nav-index">0{index + 1}</span>{label}
-              </a>
-            ))}
-          </nav>
-          <div className="header-actions">
-            <button className="menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label="Toggle navigation">{menuOpen ? <X/> : <Menu/>}</button>
+      <section className={"slide slide-about " + (active === 1 ? "is-active" : "")}>
+        <Label number="01 / WHO'S THIS?">a little about me</Label>
+        <div className="about-layout">
+          <div className="about-heading"><p className="overline">FAHAD MALIK <span className="muted">(SPIDEY)</span></p><h2>curiosity<br />got me <em>here.</em></h2><div className="handwritten">still learning. still building. ↗</div></div>
+          <div className="about-copy">
+            <p className="about-lead">i started coding when i was around eight. i didn't have a laptop for a long time, but that didn't really stop me from being curious.</p>
+            <p>I learned by exploring, trying things, breaking them, fixing them, and then getting distracted by another idea. Eventually, that curiosity turned into real projects, open-source experiments, and a studio of my own.</p>
+            <p>I'm a full-stack developer. I enjoy the whole process — figuring out an idea, designing how it should feel, writing the code, and making the details work.</p>
+            <p>I don't want to spend my time only talking about what I could build. I'd rather build it and see where it goes.</p>
+            <div className="about-foot"><span>SELF-TAUGHT BY DOING</span><span>BASED IN INDIA</span></div>
           </div>
-        </header>
+        </div><span className="slide-decoration">✳</span>
+      </section>
 
-        <main>
-          <section id="hello" className="hero section-wrap">
-            <div className="hero-copy">
-              <p className="hand-note note-top">hey, you made it! <span>↙</span></p>
-              <p className="eyebrow"><span className="live-dot"/> I WRITE CODE, MAKE THINGS & GET CURIOUS</p>
-              <h1>hello, i'm<br/><span className="name-highlight">fahad malik</span><Doodle className="hero-spark">✳</Doodle></h1>
-              <p className="hero-description">i like making things with code. some turn out useful, some turn out strange. either way, i learn something.</p>
-              <div className="hero-links">
-                <button className="pill-button dark" onClick={() => jumpTo("story")}>get to know me <ArrowDown size={15}/></button>
-                <a className="text-link" href="mailto:hellospideydev@gmail.com">or just say hello <ArrowUpRight size={15}/></a>
-              </div>
-            </div>
-            <div className="hero-art" aria-label="Hand-drawn portrait illustration">
-              <div className="art-paper">
-                <div className="art-tape tape-one"/><div className="art-tape tape-two"/>
-                <svg className="portrait-drawing" viewBox="0 0 390 440" role="img" aria-label="A playful hand-drawn character">
-                  <path d="M85 190 Q48 110 115 67 Q195 17 267 73 Q337 124 297 213 L280 298 Q246 365 171 357 Q88 349 77 273Z" fill="#f2b98e" stroke="#292720" strokeWidth="5" strokeLinejoin="round"/>
-                  <path d="M77 185 Q42 100 109 59 Q174 15 259 53 Q329 85 314 177 Q287 137 263 121 Q207 151 123 121 Q107 163 77 185Z" fill="#292720" stroke="#292720" strokeWidth="5" strokeLinejoin="round"/>
-                  <path d="M122 218q20-16 39 0M220 218q20-16 39 0" fill="none" stroke="#292720" strokeWidth="5" strokeLinecap="round"/>
-                  <path d="M175 261q25 25 51 0" fill="none" stroke="#a84f42" strokeWidth="5" strokeLinecap="round"/>
-                  <path d="M166 239q13 8 24 0" fill="none" stroke="#d98d69" strokeWidth="3" strokeLinecap="round"/>
-                  <path d="M92 365q-20 31-17 62h241q-5-44-28-64-43 34-104 24-57-9-92-22Z" fill="#a8bd77" stroke="#292720" strokeWidth="5" strokeLinejoin="round"/>
-                  <path d="M135 371l-22 54M256 371l22 54" stroke="#292720" strokeWidth="4" strokeLinecap="round"/>
-                  <path d="M65 157q-23 2-18 34M307 155q27-2 31 28" fill="none" stroke="#292720" strokeWidth="5" strokeLinecap="round"/>
-                </svg>
-                <span className="art-caption">a very accurate portrait<br/> (drawn by absolutely nobody)</span>
-              </div>
-              <Doodle className="art-star">✳</Doodle><Doodle className="art-flower">✿</Doodle>
-              <span className="art-side-note">just here<br/>making stuff ↗</span>
-            </div>
-            <div className="hero-bottom-note"><span>SCROLL A LITTLE</span><span className="scribble-line"/></div>
-          </section>
+      <section className={"slide slide-work " + (active === 2 ? "is-active" : "")}>
+        <Label number="02 / THE WORK">some things i've been making</Label>
+        <div className="work-heading"><h2>ideas don't<br />build <em>themselves.</em></h2><p>These are a few corners of my brain that turned into projects. Some are ongoing, some are experiments. There's always something to improve.</p></div>
+        <div className="project-grid">{projects.map((p, i) => <a className="project" href={p[3]} target="_blank" rel="noreferrer" key={p[0]}><div className="project-top"><span>0{i + 1} / {p[1]}</span><ArrowUpRight size={16} /></div><div className="project-mark">{p[4]}</div><h3>{p[0]}</h3><p>{p[2]}</p></a>)}</div>
+      </section>
 
-          <section id="doing" className="doing-section section-wrap">
-            <SectionHeading number="01" eyebrow="SO, WHAT DO I ACTUALLY DO?">a bit of this,<br/><em>a bit of that.</em></SectionHeading>
-            <div className="doing-grid">
-              <article className="doing-item doing-main"><span className="doing-icon">✳</span><h3>i build software.</h3><p>Web experiences, tools, interfaces and the bits underneath them. I like understanding how things work, then making my own version.</p><span className="margin-note">the fun is in the details ↗</span></article>
-              <article className="doing-item"><span className="doing-icon orange">⌘</span><h3>i experiment.</h3><p>Engines, little utilities, strange ideas and things that start with “what if…”</p></article>
-              <article className="doing-item"><span className="doing-icon green">✎</span><h3>i design by making.</h3><p>I care about how software feels, not just whether it works. The tiny interactions count too.</p></article>
-            </div>
-          </section>
+      <section className={"slide slide-stack " + (active === 3 ? "is-active" : "")}>
+        <Label number="03 / THE TOOLBOX">what i work with</Label>
+        <div className="stack-heading"><h2>my tools.<br /><em>my playground.</em></h2><p>I don't marry a framework. I pick what makes sense, learn what I need, and keep moving.</p></div>
+        <div className="stack-groups">{stack.map((group, i) => <div className="stack-group" key={group[0]}><span className="stack-number">0{i + 1}</span><div className="stack-content"><span className="stack-label">{group[0]}</span><div className="stack-items">{group.slice(1).map((item) => <span key={item}>{item}</span>)}</div></div></div>)}</div>
+        <p className="stack-note">the list changes. that's a good thing.</p>
+      </section>
 
-          <section id="toolbox" className="toolbox-section section-wrap">
-            <div className="toolbox-top"><SectionHeading number="02" eyebrow="THE THINGS I REACH FOR">my little<br/><em>toolbox.</em></SectionHeading><p className="side-explainer">These are the tools I reach for most. Some days I use them to make something useful. Other days I just break things and learn.</p></div>
-            <div className="tool-list">
-              {tools.map((tool, index) => <div className="tool-row" key={tool.name}><span className="tool-number">0{index + 1}</span><span className={`tool-name ${tool.color}`}>{tool.name}</span><span className="tool-note">{tool.note}</span><ArrowUpRight className="tool-arrow" size={18}/></div>)}
-            </div>
-            <p className="tool-footnote"><Doodle>✳</Doodle> The toolbox changes. That's kind of the point.</p>
-          </section>
+      <section className={"slide slide-mind " + (active === 4 ? "is-active" : "")}>
+        <Label number="04 / THE WAY I THINK">a thing i try to live by</Label>
+        <div className="mind-content"><p className="overline">A PERSONAL RULE, NOT A SLOGAN</p><h2>don't fall prey<br />to <span>flattery.</span><br /><em>build always.</em></h2><div className="mind-bottom"><p>Don't underestimate anyone. And don't let praise become the thing you work for. Make something real, learn from what doesn't work, and keep getting better.</p><span>— fahad / spidey</span></div></div><div className="mind-mark">✳</div>
+      </section>
 
-          <section id="story" className="story-section section-wrap">
-            <SectionHeading number="03" eyebrow="A LITTLE BACKSTORY">how i got<br/><em>here.</em></SectionHeading>
-            <div className="story-layout">
-              <div className="story-stamp"><span>SELF-TAUGHT</span><strong>by<br/>curiosity</strong><span className="stamp-star">✳</span></div>
-              <div className="story-copy">
-                <p className="story-lead">i didn't really wait for someone to show me how to make things. i just started poking around.</p>
-                <p>One thing led to another: a bit of code, a broken page, a late-night fix, and then a new idea. The internet became a place where I could learn something and immediately try it for myself.</p>
-                <p>Over time, that curiosity turned into building websites, software, tools and experiments. I learned by making, breaking, looking things up and trying again.</p>
-                <p>I'm still figuring plenty of things out. I hope I always am.</p>
-                <span className="story-signature">— fahad <span>♡</span></span>
-              </div>
-            </div>
-          </section>
-
-          <section id="beliefs" className="beliefs-section section-wrap">
-            <div className="beliefs-label"><span>04 / A FEW THINGS I BELIEVE</span><Doodle>✳</Doodle></div>
-            <h2>don't fall prey<br/>to <span>flattery.</span><br/><em>build always.</em></h2>
-            <div className="beliefs-bottom"><p>I'd rather make something, learn from it, and make it better than spend forever talking about what I might do.</p><span className="beliefs-underline">that's the whole thing. ↗</span></div>
-          </section>
-
-          <section id="inspired" className="inspired-section section-wrap">
-            <SectionHeading number="05" eyebrow="STUFF THAT GETS MY BRAIN GOING">things that<br/><em>inspire me.</em></SectionHeading>
-            <div className="inspiration-cloud">
-              <span className="cloud-word cloud-one">the open web</span><span className="cloud-word cloud-two">curiosity</span>
-              <span className="cloud-word cloud-three">old computers</span><span className="cloud-word cloud-four">independent makers</span>
-              <span className="cloud-word cloud-five">good design</span><span className="cloud-word cloud-six">big ideas</span>
-              <span className="cloud-word cloud-seven">beautifully weird things</span><span className="cloud-word cloud-eight">learning by doing</span>
-              <Doodle className="cloud-star">✳</Doodle><Doodle className="cloud-spark">✦</Doodle>
-            </div>
-            <p className="inspired-caption">basically, anything that makes me stop and think, “wait… that's possible?”</p>
-          </section>
-
-          <section id="next" className="next-section section-wrap">
-            <SectionHeading number="06" eyebrow="THERE'S MORE TO COME">what's next?<br/><em>good question.</em></SectionHeading>
-            <div className="next-content">
-              <div className="next-note"><span className="next-pin"/>CURRENTLY THINKING ABOUT</div>
-              <p>Going deeper into software engineering. Making more ambitious tools. Understanding graphics, systems and the things that happen beneath the interface.</p>
-              <p>I'd love to keep exploring game technology, creative software and ideas that don't fit neatly into a category.</p>
-              <p className="next-last">No grand master plan. Just a lot of things I want to try.</p>
-            </div>
-            <Doodle className="next-doodle">↗</Doodle>
-          </section>
-
-          <section id="contact" className="contact-section section-wrap">
-            <div className="contact-paper">
-              <span className="contact-kicker">07 / BEFORE YOU GO</span>
-              <Doodle className="contact-flower">✿</Doodle>
-              <h2>got something<br/>on your <em>mind?</em></h2>
-              <p>Ideas, questions, collaborations, or just a good conversation. My inbox is open.</p>
-              <a className="email-link" href="mailto:hellospideydev@gmail.com">hellospideydev@gmail.com <ArrowUpRight size={20}/></a>
-              <div className="social-links">
-                <a href="https://github.com/spideythedev" target="_blank" rel="noreferrer"><Github size={17}/> GitHub <ArrowUpRight size={13}/></a>
-                <a href="https://linkedin.com/in/fahadmalik-tokyo/" target="_blank" rel="noreferrer"><Linkedin size={17}/> LinkedIn <ArrowUpRight size={13}/></a>
-                <a href="mailto:hellospideydev@gmail.com"><Mail size={17}/> Email <ArrowUpRight size={13}/></a>
-              </div>
-              <span className="contact-side-note">don't be a stranger :)</span>
-            </div>
-          </section>
-        </main>
-
-        <footer className="site-footer">
-          <a className="footer-mark" href="#hello" onClick={(event) => { event.preventDefault(); jumpTo("hello"); }}>f<span>.</span>m</a>
-          <span>made with curiosity, and probably too many tabs open.</span>
-          <span>© 2026 fahad malik</span>
-        </footer>
-        <button className="back-top" onClick={() => jumpTo("hello")} aria-label="Back to top"><ArrowUpRight size={18}/></button>
-      </div>
-    </>
-  );
+      <section className={"slide slide-contact " + (active === 5 ? "is-active" : "")}>
+        <Label number="05 / THAT'S ME">the internet is a small place</Label>
+        <div className="contact-layout"><div><p className="overline">HAVE AN IDEA? LET'S TALK.</p><h2>say<br />hello<span>.</span></h2><p className="contact-copy">Got a project, a question, or something interesting to share? Just write. No formal introduction needed.</p><a className="email-button" href="mailto:hellospideydev@gmail.com">hellospideydev@gmail.com <ArrowUpRight size={18} /></a></div>
+          <div className="contact-details"><a href="https://github.com/spideythedev" target="_blank" rel="noreferrer"><Github /><span>GitHub</span><ArrowUpRight /></a><a href="https://linkedin.com/in/fahadmalik-tokyo/" target="_blank" rel="noreferrer"><Linkedin /><span>LinkedIn</span><ArrowUpRight /></a><a href="mailto:hellospideydev@gmail.com"><Mail /><span>Email</span><ArrowUpRight /></a><div className="contact-signoff">made by me, not a committee. <span>♡</span></div></div>
+        </div><footer className="deck-footer"><span>FAHAD MALIK / SPIDEY</span><span>© 2026</span><span>YOU MADE IT TO THE END.</span></footer>
+      </section>
+    </div></div>
+    <nav className="slide-nav"><div className="slide-nav-label">{slides[active]}</div><div className="slide-nav-actions"><button onClick={() => go(active - 1)} disabled={active === 0} aria-label="Previous slide"><ArrowLeft /></button><button onClick={() => go(active + 1)} disabled={active === slides.length - 1} aria-label="Next slide"><ArrowRight /></button></div></nav>
+    <div className="side-rail"><span>SCROLL / ARROW KEYS</span><i /><span>0{active + 1} — 06</span></div>
+  </main>;
 }
-
-export default App;
